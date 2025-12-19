@@ -1,0 +1,1290 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة صفقات الذهب (XAUUSD) - استراتيجية الجذور التربيعية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* أنماط عامة */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Tahoma', Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            /* ألوان الوضع الفاتح */
+            --bg-color: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --text-color: #333;
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: white;
+            --input-bg: #f8f9fa;
+            --input-border: #ddd;
+            --shadow-color: rgba(0, 0, 0, 0.15);
+            --header-border: rgba(212, 175, 55, 0.3);
+            --section-bg: rgba(255, 255, 255, 0.9);
+            --instructions-bg: rgba(248, 249, 250, 0.9);
+            --formula-bg: linear-gradient(135deg, #f1f2f6 0%, #dfe4ea 100%);
+            --alert-bg: #ffeaea;
+            --alert-color: #c0392b;
+            --alert-border: #e74c3c;
+            --button-bg: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            --button-hover: linear-gradient(135deg, #b8941f 0%, #9c7c15 100%);
+            --button-text: white;
+            --gold-color: #d4af37;
+            --gold-light: #f7e8c3;
+            --blue-color: #3498db;
+            --green-color: #2ecc71;
+            --red-color: #e74c3c;
+            --purple-color: #9b59b6;
+            --orange-color: #e67e22;
+            --buy-color: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            --sell-color: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            --transition-speed: 0.3s;
+        }
+        
+        .dark-mode {
+            /* ألوان الوضع الداكن */
+            --bg-color: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --text-color: #e0e0e0;
+            --container-bg: rgba(30, 30, 40, 0.95);
+            --card-bg: #2d2d3d;
+            --input-bg: #3a3a4a;
+            --input-border: #555;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --header-border: rgba(230, 193, 88, 0.3);
+            --section-bg: rgba(45, 45, 60, 0.9);
+            --instructions-bg: rgba(45, 45, 60, 0.9);
+            --formula-bg: linear-gradient(135deg, #3a3a4a 0%, #2d2d3d 100%);
+            --alert-bg: #5a2a2a;
+            --alert-color: #ff7b7b;
+            --alert-border: #ff5252;
+            --button-bg: linear-gradient(135deg, #e6c158 0%, #d4af37 100%);
+            --button-hover: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            --button-text: #121212;
+            --gold-color: #e6c158;
+            --gold-light: #3a3a2a;
+            --blue-color: #64b5f6;
+            --green-color: #4caf50;
+            --red-color: #f44336;
+            --purple-color: #ab47bc;
+            --orange-color: #f39c12;
+            --buy-color: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+            --sell-color: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        }
+        
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            transition: background var(--transition-speed), color var(--transition-speed);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: var(--container-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 30px;
+            margin-top: 20px;
+            transition: all var(--transition-speed);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* الترويسة */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--header-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        
+        .header-content {
+            flex: 1;
+            position: relative;
+        }
+        
+        h1 {
+            color: var(--gold-color);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            right: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to left, var(--gold-color), transparent);
+            border-radius: 3px;
+        }
+        
+        .subtitle {
+            color: var(--text-color);
+            opacity: 0.8;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        
+        /* زر الوضع الداكن */
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-color);
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-speed);
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .theme-toggle:hover {
+            background: var(--gold-color);
+            color: var(--button-text);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* أزرار نوع الصفقة */
+        .trade-type-section {
+            background: var(--section-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            border-right: 5px solid var(--gold-color);
+            transition: all var(--transition-speed);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .trade-type-title {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        .trade-type-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .trade-btn {
+            flex: 1;
+            min-width: 180px;
+            padding: 18px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .trade-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .buy-btn {
+            background: var(--buy-color);
+            color: white;
+        }
+        
+        .buy-btn.active {
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3), 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .sell-btn {
+            background: var(--sell-color);
+            color: white;
+        }
+        
+        .sell-btn.active {
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.3), 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* نموذج الإدخال */
+        .input-section {
+            background: var(--section-bg);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-right: 5px solid var(--gold-color);
+            transition: all var(--transition-speed);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .input-section h2 {
+            color: var(--gold-color);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .input-field {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold-color);
+            font-size: 1.2rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: all var(--transition-speed);
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--gold-color);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        
+        .auto-calc-note {
+            font-size: 0.95rem;
+            color: var(--gold-color);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        
+        .calculate-btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            display: block;
+            margin: 30px auto 0;
+            font-weight: bold;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .calculate-btn:hover {
+            background: var(--button-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* تنبيهات */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .alert.error {
+            background: var(--alert-bg);
+            color: var(--alert-color);
+            border-right: 5px solid var(--alert-border);
+        }
+        
+        /* عرض النتائج */
+        .results-section {
+            display: none;
+        }
+        
+        .results-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .results-header {
+            text-align: center;
+            margin-bottom: 35px;
+            color: var(--text-color);
+            position: relative;
+        }
+        
+        .results-header:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 150px;
+            height: 3px;
+            background: linear-gradient(to right, var(--gold-color), transparent, var(--gold-color));
+            border-radius: 3px;
+        }
+        
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        
+        .result-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px var(--shadow-color);
+            border-top: 6px solid;
+            transition: all var(--transition-speed);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .result-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+        
+        .result-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .result-description {
+            margin-bottom: 20px;
+            color: var(--text-color);
+            opacity: 0.9;
+            line-height: 1.5;
+            font-size: 1rem;
+        }
+        
+        .result-value-container {
+            position: relative;
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+        
+        .result-value:hover {
+            transform: scale(1.02);
+        }
+        
+        .result-value:active {
+            transform: scale(0.98);
+        }
+        
+        .copy-notification {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .result-value.copied .copy-notification {
+            opacity: 1;
+        }
+        
+        /* تلوين النتائج */
+        .entry {
+            border-top-color: var(--green-color);
+        }
+        
+        .entry .result-value {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.15) 0%, rgba(46, 204, 113, 0.05) 100%);
+            color: var(--green-color);
+            border: 2px solid rgba(46, 204, 113, 0.2);
+        }
+        
+        .stop-loss {
+            border-top-color: var(--red-color);
+        }
+        
+        .stop-loss .result-value {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.15) 0%, rgba(231, 76, 60, 0.05) 100%);
+            color: var(--red-color);
+            border: 2px solid rgba(231, 76, 60, 0.2);
+        }
+        
+        .target {
+            border-top-color: var(--blue-color);
+        }
+        
+        .target .result-value {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.15) 0%, rgba(52, 152, 219, 0.05) 100%);
+            color: var(--blue-color);
+            border: 2px solid rgba(52, 152, 219, 0.2);
+        }
+        
+        .bottom-area {
+            border-top-color: var(--purple-color);
+        }
+        
+        .bottom-area .result-value {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.15) 0%, rgba(155, 89, 182, 0.05) 100%);
+            color: var(--purple-color);
+            border: 2px solid rgba(155, 89, 182, 0.2);
+        }
+        
+        .rebound {
+            border-top-color: var(--orange-color);
+        }
+        
+        .rebound .result-value {
+            background: linear-gradient(135deg, rgba(230, 126, 34, 0.15) 0%, rgba(230, 126, 34, 0.05) 100%);
+            color: var(--orange-color);
+            border: 2px solid rgba(230, 126, 34, 0.2);
+        }
+        
+        /* كيف تستخدم */
+        .instructions {
+            background: var(--instructions-bg);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 50px;
+            border-right: 5px solid var(--blue-color);
+            transition: all var(--transition-speed);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .instructions h3 {
+            color: var(--blue-color);
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ol {
+            padding-right: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .instructions li {
+            margin-bottom: 15px;
+            padding-right: 15px;
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        .instructions li:before {
+            content: '';
+            position: absolute;
+            right: -15px;
+            top: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--gold-color);
+            border-radius: 50%;
+        }
+        
+        .formula {
+            background: var(--formula-bg);
+            padding: 18px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 1.1rem;
+            overflow-x: auto;
+            transition: all var(--transition-speed);
+            border-left: 4px solid var(--gold-color);
+        }
+        
+        /* التذييل */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid var(--header-border);
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.95rem;
+        }
+        
+        /* رسالة التأكيد عند النسخ */
+        .copy-confirm {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--green-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s;
+        }
+        
+        .copy-confirm.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* التكيف مع الشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .theme-toggle {
+                align-self: flex-end;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-field {
+                min-width: 100%;
+            }
+            
+            .trade-btn {
+                min-width: 140px;
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+            
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* تأثيرات إضافية */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+        
+        /* تلميح النسخ */
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            right: 50%;
+            transform: translateX(50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .result-value-container:hover .tooltip {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1><i class="fas fa-calculator"></i> حاسبة صفقات الذهب (XAUUSD)</h1>
+                <p class="subtitle">حساب صفقات الذهب باستخدام استراتيجية الجذور التربيعية على فريم الأربع ساعات</p>
+            </div>
+            <button id="themeToggle" class="theme-toggle">
+                <span id="themeIcon"><i class="fas fa-moon"></i></span>
+                <span id="themeText">الوضع الداكن</span>
+            </button>
+        </header>
+        
+        <!-- قسم أزرار الشراء والبيع -->
+        <section class="trade-type-section">
+            <div class="trade-type-title"><i class="fas fa-exchange-alt"></i> اختر نوع الصفقة:</div>
+            <div class="trade-type-buttons">
+                <button id="buyBtn" class="trade-btn buy-btn active">
+                    <span><i class="fas fa-chart-line"></i></span>
+                    <span>صفقة شراء</span>
+                </button>
+                <button id="sellBtn" class="trade-btn sell-btn">
+                    <span><i class="fas fa-chart-bar"></i></span>
+                    <span>صفقة بيع</span>
+                </button>
+            </div>
+        </section>
+        
+        <section class="input-section">
+            <h2><i class="fas fa-edit"></i> أدخل بيانات صفقة الشراء</h2>
+            <div class="input-group">
+                <div class="input-field">
+                    <label id="peakLabel" for="peakPrice"><i class="fas fa-mountain"></i> سعر بداية الهبوط (القمة)</label>
+                    <div class="input-with-icon">
+                        <div class="input-icon"><i class="fas fa-dollar-sign"></i></div>
+                        <input type="number" id="peakPrice" placeholder="مثال: 2050.50" step="0.01" min="0">
+                    </div>
+                    <div class="auto-calc-note"><i class="fas fa-exclamation-circle"></i> سيتم حساب سعر القاع تلقائيًا عند إدخال سعر القمة</div>
+                </div>
+                
+                <div class="input-field">
+                    <label id="bottomLabel" for="bottomPrice"><i class="fas fa-chart-area"></i> سعر القاع الفعلي (بعد الارتداد)</label>
+                    <div class="input-with-icon">
+                        <div class="input-icon"><i class="fas fa-dollar-sign"></i></div>
+                        <input type="number" id="bottomPrice" placeholder="مثال: 1980.25" step="0.01" min="0">
+                    </div>
+                    <div class="auto-calc-note"><i class="fas fa-lightbulb"></i> يمكنك تعديل القيمة المحسوبة تلقائيًا</div>
+                    <div class="auto-calc-note"><i class="fas fa-chart-bar"></i> سيتم استخدام هذا السعر لحساب منطقة الارتداد للشراء</div>
+                </div>
+            </div>
+            
+            <button id="calculateBtn" class="calculate-btn pulse">
+                <i class="fas fa-calculator"></i> احسب الصفقة
+            </button>
+            
+            <div id="errorAlert" class="alert error">
+                <i class="fas fa-exclamation-triangle"></i> يرجى إدخال قيم صحيحة (أرقام أكبر من الصفر) في كلا الحقلين.
+            </div>
+        </section>
+        
+        <section id="resultsSection" class="results-section">
+            <h2 id="resultsTitle" class="results-header"><i class="fas fa-chart-pie"></i> نتائج حساب صفقة الشراء</h2>
+            <div class="results-container">
+                <div class="result-card bottom-area">
+                    <div class="result-title">
+                        <span id="bottomAreaIcon"><i class="fas fa-chart-area"></i></span>
+                        <span id="bottomAreaTitle">منطقة القاع المتوقعة</span>
+                    </div>
+                    <p id="bottomAreaDesc" class="result-description">منطقة القاع المحسوبة باستخدام المعادلة: (جذر(سعر القمة) × 0.97)²</p>
+                    <div class="result-value-container">
+                        <div id="bottomArea" class="result-value" data-copy="منطقة القاع المتوقعة">
+                            -<span class="copy-notification">تم النسخ!</span>
+                        </div>
+                        <div class="tooltip">انقر للنسخ</div>
+                    </div>
+                </div>
+                
+                <div class="result-card entry">
+                    <div class="result-title">
+                        <span id="entryIcon"><i class="fas fa-sign-in-alt"></i></span>
+                        <span id="entryTitle">منطقة الدخول شراء</span>
+                    </div>
+                    <p id="entryDesc" class="result-description">منطقة الدخول بين: (جذر(سعر القاع) + 0.25)² و (جذر(سعر القاع) + 0.5)²</p>
+                    <div class="result-value-container">
+                        <div id="entryArea" class="result-value" data-copy="منطقة الدخول">
+                            -<span class="copy-notification">تم النسخ!</span>
+                        </div>
+                        <div class="tooltip">انقر للنسخ</div>
+                    </div>
+                </div>
+                
+                <div class="result-card rebound">
+                    <div class="result-title">
+                        <span id="reboundIcon"><i class="fas fa-redo-alt"></i></span>
+                        <span id="reboundTitle">منطقة الارتداد للشراء</span>
+                    </div>
+                    <p id="reboundDesc" class="result-description">منطقة الارتداد المحسوبة: (جذر(سعر القاع) + 0.75)²</p>
+                    <div class="result-value-container">
+                        <div id="reboundArea" class="result-value" data-copy="منطقة الارتداد">
+                            -<span class="copy-notification">تم النسخ!</span>
+                        </div>
+                        <div class="tooltip">انقر للنسخ</div>
+                    </div>
+                </div>
+                
+                <div class="result-card stop-loss">
+                    <div class="result-title">
+                        <span><i class="fas fa-shield-alt"></i></span>
+                        <span id="stopLossTitle">وقف الخسارة</span>
+                    </div>
+                    <p id="stopLossDesc" class="result-description">وقف الخسارة أسفل منطقة القاع المحسوبة: أقل من منطقة القاع</p>
+                    <div class="result-value-container">
+                        <div id="stopLoss" class="result-value" data-copy="وقف الخسارة">
+                            -<span class="copy-notification">تم النسخ!</span>
+                        </div>
+                        <div class="tooltip">انقر للنسخ</div>
+                    </div>
+                </div>
+                
+                <div class="result-card target">
+                    <div class="result-title">
+                        <span><i class="fas fa-bullseye"></i></span>
+                        <span id="target1Title">الهدف الأول</span>
+                    </div>
+                    <p id="target1Desc" class="result-description">الهدف الأول: سعر القاع ÷ 0.97</p>
+                    <div class="result-value-container">
+                        <div id="target1" class="result-value" data-copy="الهدف الأول">
+                            -<span class="copy-notification">تم النسخ!</span>
+                        </div>
+                        <div class="tooltip">انقر للنسخ</div>
+                    </div>
+                </div>
+                
+                <div class="result-card target">
+                    <div class="result-title">
+                        <span><i class="fas fa-bullseye"></i></span>
+                        <span id="target2Title">الهدف الثاني</span>
+                    </div>
+                    <p id="target2Desc" class="result-description">الهدف الثاني: سعر بداية الهبوط (القمة)</p>
+                    <div class="result-value-container">
+                        <div id="target2" class="result-value" data-copy="الهدف الثاني">
+                            -<span class="copy-notification">تم النسخ!</span>
+                        </div>
+                        <div class="tooltip">انقر للنسخ</div>
+                    </div>
+                </div>
+                
+                <div class="result-card target">
+                    <div class="result-title">
+                        <span><i class="fas fa-bullseye"></i></span>
+                        <span id="target3Title">الهدف الثالث</span>
+                    </div>
+                    <p id="target3Desc" class="result-description">الهدف الثالث: (جذر(سعر القمة) + 0.75)²</p>
+                    <div class="result-value-container">
+                        <div id="target3" class="result-value" data-copy="الهدف الثالث">
+                            -<span class="copy-notification">تم النسخ!</span>
+                        </div>
+                        <div class="tooltip">انقر للنسخ</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="instructions">
+            <h3><i class="fas fa-info-circle"></i> كيفية استخدام الآلة الحاسبة</h3>
+            <ol>
+                <li>اختر نوع الصفقة: <strong>شراء</strong> أو <strong>بيع</strong></li>
+                <li>أدخل <strong id="step2">سعر بداية الهبوط (القمة)</strong></li>
+                <li>سعر القاع سيحسب تلقائيًا، ويمكنك تعديله يدويًا إذا لزم الأمر</li>
+                <li>انقر على زر <strong>"احسب الصفقة"</strong> للحصول على النتائج</li>
+                <li><strong>انقر على أي نتيجة لنسخها إلى الحافظة</strong></li>
+                <li>استخدم النتائج المعروضة لتحديد نقاط الدخول والخروج في صفقتك</li>
+                <li>يمكنك التبديل بين الوضع الفاتح والداكن باستخدام الزر أعلى الصفحة</li>
+            </ol>
+            
+            <h3><i class="fas fa-calculator"></i> المعادلات المستخدمة لصفقات الشراء</h3>
+            <div class="formula">منطقة القاع = (√(سعر القمة) × 0.97)²</div>
+            <div class="formula">منطقة الدخول = بين (√(سعر القاع) + 0.25)² و (√(سعر القاع) + 0.5)²</div>
+            <div class="formula">منطقة الارتداد للشراء = (√(سعر القاع) + 0.75)²</div>
+            <div class="formula">الهدف الأول = سعر القاع ÷ 0.97</div>
+            <div class="formula">الهدف الثالث = (√(سعر القمة) + 0.75)²</div>
+            
+            <h3><i class="fas fa-exchange-alt"></i> المعادلات المستخدمة لصفقات البيع (معكوسة)</h3>
+            <div class="formula">منطقة القمة = (√(سعر القاع) ÷ 0.97)²</div>
+            <div class="formula">منطقة الدخول = بين (√(سعر القمة) - 0.5)² و (√(سعر القمة) - 0.25)²</div>
+            <div class="formula">منطقة الارتداد للبيع = (√(سعر القمة) - 0.75)²</div>
+            <div class="formula">الهدف الأول = سعر القمة × 0.97</div>
+            <div class="formula">الهدف الثالث = (√(سعر القاع) - 0.75)²</div>
+            
+            <h3><i class="fas fa-lightbulb"></i> تفسير النتائج</h3>
+            <ul>
+                <li id="li1"><strong>منطقة القاع/القمة المتوقعة</strong>: المنطقة التي يتوقع أن ينتهي عندها الهبوط/الصعود</li>
+                <li id="li2"><strong>منطقة الدخول</strong>: أفضل منطقة لفتح صفقة شراء/بيع بعد الارتداد</li>
+                <li id="li3"><strong>منطقة الارتداد</strong>: منطقة إضافية للدخول في حالة استمرار الارتداد</li>
+                <li id="li4"><strong>وقف الخسارة</strong>: يجب وضعه أسفل/فوق منطقة الدخول لحماية رأس المال</li>
+                <li id="li5"><strong>الأهداف</strong>: مستويات جني الأرباح المحتملة</li>
+            </ul>
+            
+            <p style="margin-top: 20px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 10px; font-style: italic; border-right: 4px solid var(--gold-color);">
+                <i class="fas fa-exclamation-circle"></i> ملاحظة: هذه الأداة للمساعدة في التحليل الفني ولا تضرب الربح. تذكر دائماً إدارة المخاطر وتجنب التداول بدون خطة.
+            </p>
+        </section>
+    </div>
+    
+    <footer>
+        <p>© 2023 حاسبة صفقات الذهب (XAUUSD) - استراتيجية الجذور التربيعية | للأغراض التعليمية فقط</p>
+    </footer>
+
+    <!-- رسالة تأكيد النسخ -->
+    <div id="copyConfirm" class="copy-confirm">
+        <i class="fas fa-check-circle"></i> تم نسخ القيمة إلى الحافظة
+    </div>
+
+    <script>
+        // العناصر الأساسية في الصفحة
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultsSection = document.getElementById('resultsSection');
+        const errorAlert = document.getElementById('errorAlert');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+        const peakPriceInput = document.getElementById('peakPrice');
+        const bottomPriceInput = document.getElementById('bottomPrice');
+        const buyBtn = document.getElementById('buyBtn');
+        const sellBtn = document.getElementById('sellBtn');
+        const copyConfirm = document.getElementById('copyConfirm');
+        
+        // عناصر النتائج
+        const resultValues = [
+            document.getElementById('bottomArea'),
+            document.getElementById('entryArea'),
+            document.getElementById('reboundArea'),
+            document.getElementById('stopLoss'),
+            document.getElementById('target1'),
+            document.getElementById('target2'),
+            document.getElementById('target3')
+        ];
+        
+        // عناصر النصوص الديناميكية
+        const inputTitle = document.getElementById('inputTitle');
+        const resultsTitle = document.getElementById('resultsTitle');
+        const peakLabel = document.getElementById('peakLabel');
+        const bottomLabel = document.getElementById('bottomLabel');
+        const bottomAreaTitle = document.getElementById('bottomAreaTitle');
+        const bottomAreaDesc = document.getElementById('bottomAreaDesc');
+        const entryTitle = document.getElementById('entryTitle');
+        const entryDesc = document.getElementById('entryDesc');
+        const reboundTitle = document.getElementById('reboundTitle');
+        const reboundDesc = document.getElementById('reboundDesc');
+        const stopLossTitle = document.getElementById('stopLossTitle');
+        const stopLossDesc = document.getElementById('stopLossDesc');
+        const target1Title = document.getElementById('target1Title');
+        const target1Desc = document.getElementById('target1Desc');
+        const target2Title = document.getElementById('target2Title');
+        const target2Desc = document.getElementById('target2Desc');
+        const target3Title = document.getElementById('target3Title');
+        const target3Desc = document.getElementById('target3Desc');
+        const bottomAreaIcon = document.getElementById('bottomAreaIcon');
+        const entryIcon = document.getElementById('entryIcon');
+        const reboundIcon = document.getElementById('reboundIcon');
+        const step2 = document.getElementById('step2');
+        const li1 = document.getElementById('li1');
+        const li2 = document.getElementById('li2');
+        const li3 = document.getElementById('li3');
+        const li4 = document.getElementById('li4');
+        const li5 = document.getElementById('li5');
+        
+        // متغيرات التتبع
+        let isBottomManuallyChanged = false;
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+        let isBuyMode = true; // true = شراء, false = بيع
+
+        // تطبيق وضع التصميم عند التحميل
+        document.addEventListener('DOMContentLoaded', function() {
+            applyTheme();
+            
+            // تعبئة حقول الإدخال بقيم افتراضية للمثال التوضيحي
+            peakPriceInput.value = '4245.195';
+            bottomPriceInput.value = '1980.25';
+            
+            // حساب سعر القاع/القمة تلقائيًا من القيمة الافتراضية
+            calculateBottomPrice();
+            
+            // تحديث النصوص بناءً على نوع الصفقة
+            updateTextsForTradeType();
+            
+            // إضافة مستمعات الأحداث لنسخ النتائج
+            setupCopyListeners();
+        });
+        
+        // دالة إعداد مستمعات نسخ النتائج
+        function setupCopyListeners() {
+            resultValues.forEach(resultValue => {
+                resultValue.addEventListener('click', function() {
+                    const textToCopy = this.textContent.replace('تم النسخ!', '').trim();
+                    
+                    // نسخ النص إلى الحافظة
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        // إظهار رسالة التأكيد
+                        showCopyConfirm();
+                        
+                        // إضافة تأثير النسخ المؤقت
+                        this.classList.add('copied');
+                        setTimeout(() => {
+                            this.classList.remove('copied');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('فشل نسخ النص: ', err);
+                    });
+                });
+            });
+        }
+        
+        // دالة عرض رسالة تأكيد النسخ
+        function showCopyConfirm() {
+            copyConfirm.classList.add('show');
+            setTimeout(() => {
+                copyConfirm.classList.remove('show');
+            }, 3000);
+        }
+        
+        // دالة تحديث النصوص حسب نوع الصفقة
+        function updateTextsForTradeType() {
+            if (isBuyMode) {
+                // نصوص لصفقات الشراء
+                inputTitle.innerHTML = '<i class="fas fa-edit"></i> أدخل بيانات صفقة الشراء';
+                resultsTitle.innerHTML = '<i class="fas fa-chart-pie"></i> نتائج حساب صفقة الشراء';
+                peakLabel.innerHTML = '<i class="fas fa-mountain"></i> سعر بداية الهبوط (القمة)';
+                bottomLabel.innerHTML = '<i class="fas fa-chart-area"></i> سعر القاع الفعلي (بعد الارتداد)';
+                bottomAreaTitle.textContent = 'منطقة القاع المتوقعة';
+                bottomAreaDesc.textContent = 'منطقة القاع المحسوبة باستخدام المعادلة: (جذر(سعر القمة) × 0.97)²';
+                entryTitle.textContent = 'منطقة الدخول شراء';
+                entryDesc.textContent = 'منطقة الدخول بين: (جذر(سعر القاع) + 0.25)² و (جذر(سعر القاع) + 0.5)²';
+                reboundTitle.textContent = 'منطقة الارتداد للشراء';
+                reboundDesc.textContent = 'منطقة الارتداد المحسوبة: (جذر(سعر القاع) + 0.75)²';
+                stopLossTitle.textContent = 'وقف الخسارة';
+                stopLossDesc.textContent = 'وقف الخسارة أسفل منطقة القاع المحسوبة: أقل من منطقة القاع';
+                target1Title.textContent = 'الهدف الأول';
+                target1Desc.textContent = 'الهدف الأول: سعر القاع ÷ 0.97';
+                target2Title.textContent = 'الهدف الثاني';
+                target2Desc.textContent = 'الهدف الثاني: سعر بداية الهبوط (القمة)';
+                target3Title.textContent = 'الهدف الثالث';
+                target3Desc.textContent = 'الهدف الثالث: (جذر(سعر القمة) + 0.75)²';
+                bottomAreaIcon.innerHTML = '<i class="fas fa-chart-area"></i>';
+                entryIcon.innerHTML = '<i class="fas fa-sign-in-alt"></i>';
+                reboundIcon.innerHTML = '<i class="fas fa-redo-alt"></i>';
+                step2.textContent = 'سعر بداية الهبوط (القمة)';
+                li1.innerHTML = '<strong>منطقة القاع المتوقعة</strong>: المنطقة التي يتوقع أن ينتهي عندها الهبوط';
+                li2.innerHTML = '<strong>منطقة الدخول شراء</strong>: أفضل منطقة لفتح صفقة شراء بعد الارتداد';
+                li3.innerHTML = '<strong>منطقة الارتداد للشراء</strong>: منطقة إضافية للدخول في حالة استمرار الارتداد للأعلى';
+                li4.innerHTML = '<strong>وقف الخسارة</strong>: يجب وضعه أسفل منطقة القاع المحسوبة لحماية رأس المال';
+                li5.innerHTML = '<strong>الأهداف</strong>: مستويات جني الأرباح المحتملة';
+            } else {
+                // نصوص لصفقات البيع
+                inputTitle.innerHTML = '<i class="fas fa-edit"></i> أدخل بيانات صفقة البيع';
+                resultsTitle.innerHTML = '<i class="fas fa-chart-pie"></i> نتائج حساب صفقة البيع';
+                peakLabel.innerHTML = '<i class="fas fa-chart-area"></i> سعر بداية الصعود (القاع)';
+                bottomLabel.innerHTML = '<i class="fas fa-mountain"></i> سعر القمة الفعلية (بعد الهبوط)';
+                bottomAreaTitle.textContent = 'منطقة القمة المتوقعة';
+                bottomAreaDesc.textContent = 'منطقة القمة المحسوبة باستخدام المعادلة: (جذر(سعر القاع) ÷ 0.97)²';
+                entryTitle.textContent = 'منطقة الدخول بيع';
+                entryDesc.textContent = 'منطقة الدخول بين: (جذر(سعر القمة) - 0.5)² و (جذر(سعر القمة) - 0.25)²';
+                reboundTitle.textContent = 'منطقة الارتداد للبيع';
+                reboundDesc.textContent = 'منطقة الارتداد المحسوبة: (جذر(سعر القمة) - 0.75)²';
+                stopLossTitle.textContent = 'وقف الخسارة';
+                stopLossDesc.textContent = 'وقف الخسارة فوق منطقة القمة المحسوبة: أعلى من منطقة القمة';
+                target1Title.textContent = 'الهدف الأول';
+                target1Desc.textContent = 'الهدف الأول: سعر القمة × 0.97';
+                target2Title.textContent = 'الهدف الثاني';
+                target2Desc.textContent = 'الهدف الثاني: سعر بداية الصعود (القاع)';
+                target3Title.textContent = 'الهدف الثالث';
+                target3Desc.textContent = 'الهدف الثالث: (جذر(سعر القاع) - 0.75)²';
+                bottomAreaIcon.innerHTML = '<i class="fas fa-chart-area"></i>';
+                entryIcon.innerHTML = '<i class="fas fa-sign-in-alt"></i>';
+                reboundIcon.innerHTML = '<i class="fas fa-redo-alt"></i>';
+                step2.textContent = 'سعر بداية الصعود (القاع)';
+                li1.innerHTML = '<strong>منطقة القمة المتوقعة</strong>: المنطقة التي يتوقع أن ينتهي عندها الصعود';
+                li2.innerHTML = '<strong>منطقة الدخول بيع</strong>: أفضل منطقة لفتح صفقة بيع بعد الارتداد';
+                li3.innerHTML = '<strong>منطقة الارتداد للبيع</strong>: منطقة إضافية للدخول في حالة استمرار الارتداد للأسفل';
+                li4.innerHTML = '<strong>وقف الخسارة</strong>: يجب وضعه فوق منطقة القمة المحسوبة لحماية رأس المال';
+                li5.innerHTML = '<strong>الأهداف</strong>: مستويات جني الأرباح المحتملة';
+            }
+        }
+        
+        // دالة التحقق من صحة الإدخال
+        function validateInputs(peakPrice, bottomPrice) {
+            if (!peakPrice || !bottomPrice || peakPrice <= 0 || bottomPrice <= 0) {
+                return false;
+            }
+            return true;
+        }
+        
+        // دالة تقريب الرقم إلى منزلتين عشريتين
+        function roundToTwoDecimals(num) {
+            return Math.round(num * 100) / 100;
+        }
+        
+        // دالة حساب سعر القاع/القمة تلقائيًا
+        function calculateBottomPrice() {
+            const peakPrice = parseFloat(peakPriceInput.value);
+            
+            if (!peakPrice || peakPrice <= 0) {
+                return;
+            }
+            
+            if (isBuyMode) {
+                // حساب منطقة القاع المتوقعة للشراء: (جذر(سعر القمة) × 0.97)²
+                const sqrtPeak = Math.sqrt(peakPrice);
+                const bottomArea = Math.pow(sqrtPeak * 0.97, 2);
+                
+                // تعيين قيمة سعر القاع إذا لم يتم تعديلها يدويًا
+                if (!isBottomManuallyChanged) {
+                    bottomPriceInput.value = roundToTwoDecimals(bottomArea).toFixed(2);
+                }
+            } else {
+                // حساب منطقة القمة المتوقعة للبيع: (جذر(سعر القاع) ÷ 0.97)²
+                // لكن هنا peakPrice هو في الواقع القاع للبيع
+                const sqrtBottom = Math.sqrt(peakPrice);
+                const topArea = Math.pow(sqrtBottom / 0.97, 2);
+                
+                // تعيين قيمة سعر القمة إذا لم يتم تعديلها يدويًا
+                if (!isBottomManuallyChanged) {
+                    bottomPriceInput.value = roundToTwoDecimals(topArea).toFixed(2);
+                }
+            }
+        }
+        
+        // دالة الحساب الرئيسية
+        function calculateTrade() {
+            // الحصول على القيم من حقول الإدخال
+            const price1 = parseFloat(peakPriceInput.value);  // القمة للشراء، القاع للبيع
+            const price2 = parseFloat(bottomPriceInput.value); // القاع للشراء، القمة للبيع
+            
+            // التحقق من صحة الإدخال
+            if (!validateInputs(price1, price2)) {
+                errorAlert.style.display = 'block';
+                resultsSection.classList.remove('active');
+                return;
+            }
+            
+            // إخفاء رسالة الخطأ إذا كانت القيم صالحة
+            errorAlert.style.display = 'none';
+            
+            let bottomArea, firstReboundArea, entryUpperLimit, reboundArea, stopLoss, target1, target2, target3;
+            
+            if (isBuyMode) {
+                // حسابات صفقة الشراء
+                const sqrtPeak = Math.sqrt(price1);  // price1 = القمة
+                const sqrtBottom = Math.sqrt(price2); // price2 = القاع
+                
+                // 1. حساب منطقة القاع المتوقعة: (جذر(سعر القمة) × 0.97)²
+                bottomArea = Math.pow(sqrtPeak * 0.97, 2);
+                
+                // 2. حساب منطقة الصعود الأولى: (جذر(سعر القاع) + 0.25)²
+                firstReboundArea = Math.pow(sqrtBottom + 0.25, 2);
+                
+                // 3. حساب الحد الأعلى لمنطقة الدخول: (جذر(سعر القاع) + 0.5)²
+                entryUpperLimit = Math.pow(sqrtBottom + 0.5, 2);
+                
+                // 4. حساب منطقة الارتداد للشراء: (جذر(سعر القاع) + 0.75)²
+                reboundArea = Math.pow(sqrtBottom + 0.75, 2);
+                
+                // 5. حساب وقف الخسارة: أسفل منطقة القاع المحسوبة (نطرح 1% من منطقة القاع)
+                stopLoss = roundToTwoDecimals(bottomArea * 0.99);
+                
+                // 6. حساب الأهداف
+                target1 = roundToTwoDecimals(price2 / 0.97); // الهدف الأول: سعر القاع ÷ 0.97
+                target2 = roundToTwoDecimals(price1); // الهدف الثاني: سعر بداية الهبوط (القمة)
+                target3 = Math.pow(sqrtPeak + 0.75, 2); // الهدف الثالث: (جذر(سعر القمة) + 0.75)²
+            } else {
+                // حسابات صفقة البيع (معكوسة)
+                const sqrtBottom = Math.sqrt(price1);  // price1 = القاع
+                const sqrtPeak = Math.sqrt(price2);   // price2 = القمة
+                
+                // 1. حساب منطقة القمة المتوقعة: (جذر(سعر القاع) ÷ 0.97)²
+                bottomArea = Math.pow(sqrtBottom / 0.97, 2);
+                
+                // 2. حساب منطقة الهبوط الأولى: (جذر(سعر القمة) - 0.5)²
+                firstReboundArea = Math.pow(sqrtPeak - 0.5, 2);
+                
+                // 3. حساب الحد الأدنى لمنطقة الدخول: (جذر(سعر القمة) - 0.25)²
+                entryUpperLimit = Math.pow(sqrtPeak - 0.25, 2);
+                
+                // 4. حساب منطقة الارتداد للبيع: (جذر(سعر القمة) - 0.75)²
+                reboundArea = Math.pow(sqrtPeak - 0.75, 2);
+                
+                // 5. حساب وقف الخسارة: فوق منطقة القمة المحسوبة (نضيف 1% إلى منطقة القمة)
+                stopLoss = roundToTwoDecimals(bottomArea * 1.01);
+                
+                // 6. حساب الأهداف
+                target1 = roundToTwoDecimals(price2 * 0.97); // الهدف الأول: سعر القمة × 0.97
+                target2 = roundToTwoDecimals(price1); // الهدف الثاني: سعر بداية الصعود (القاع)
+                target3 = Math.pow(sqrtBottom - 0.75, 2); // الهدف الثالث: (جذر(سعر القاع) - 0.75)²
+            }
+            
+            // عرض النتائج مع تقريب للأرقام العشرية
+            document.getElementById('bottomArea').textContent = roundToTwoDecimals(bottomArea).toFixed(2);
+            
+            if (isBuyMode) {
+                document.getElementById('entryArea').textContent = `${roundToTwoDecimals(firstReboundArea).toFixed(2)} - ${roundToTwoDecimals(entryUpperLimit).toFixed(2)}`;
+            } else {
+                // للبيع نعكس الترتيب لأن الأصغر أولاً
+                document.getElementById('entryArea').textContent = `${roundToTwoDecimals(firstReboundArea).toFixed(2)} - ${roundToTwoDecimals(entryUpperLimit).toFixed(2)}`;
+            }
+            
+            document.getElementById('reboundArea').textContent = roundToTwoDecimals(reboundArea).toFixed(2);
+            document.getElementById('stopLoss').textContent = stopLoss.toFixed(2);
+            document.getElementById('target1').textContent = target1.toFixed(2);
+            document.getElementById('target2').textContent = target2.toFixed(2);
+            document.getElementById('target3').textContent = roundToTwoDecimals(target3).toFixed(2);
+            
+            // إظهار قسم النتائج
+            resultsSection.classList.add('active');
+            
+            // التمرير إلى قسم النتائج
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // دالة تطبيق الوضع الداكن/الفاتح
+        function applyTheme() {
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                themeIcon.innerHTML = '<i class="fas fa-sun"></i>';
+                themeText.textContent = 'الوضع الفاتح';
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                themeIcon.innerHTML = '<i class="fas fa-moon"></i>';
+                themeText.textContent = 'الوضع الداكن';
+            }
+        }
+        
+        // تبديل الوضع الداكن/الفاتح
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            localStorage.setItem('darkMode', isDarkMode);
+            applyTheme();
+        }
+        
+        // تبديل نوع الصفقة إلى شراء
+        function switchToBuy() {
+            isBuyMode = true;
+            buyBtn.classList.add('active');
+            sellBtn.classList.remove('active');
+            updateTextsForTradeType();
+            calculateBottomPrice();
+        }
+        
+        // تبديل نوع الصفقة إلى بيع
+        function switchToSell() {
+            isBuyMode = false;
+            sellBtn.classList.add('active');
+            buyBtn.classList.remove('active');
+            updateTextsForTradeType();
+            calculateBottomPrice();
+        }
+        
+        // إضافة مستمع الأحداث للأزرار
+        calculateBtn.addEventListener('click', calculateTrade);
+        
+        // إضافة مستمع الأحداث لزر تبديل الوضع
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        // إضافة مستمع الأحداث لأزرار الشراء والبيع
+        buyBtn.addEventListener('click', switchToBuy);
+        sellBtn.addEventListener('click', switchToSell);
+        
+        // حساب سعر القاع/القمة تلقائيًا عند تغيير السعر الأول
+        peakPriceInput.addEventListener('input', function() {
+            calculateBottomPrice();
+        });
+        
+        // تتبع التعديل اليدوي للسعر الثاني
+        bottomPriceInput.addEventListener('input', function() {
+            isBottomManuallyChanged = true;
+        });
+        
+        // السماح بالضغط على Enter في حقول الإدخال
+        peakPriceInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculateTrade();
+        });
+        
+        bottomPriceInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculateTrade();
+        });
+    </script>
+</body>
+</html>
